@@ -1,14 +1,24 @@
 import {
   HomeIcon,
-  UserCircleIcon,
-  TableCellsIcon,
-  BellIcon,
-  ArrowRightOnRectangleIcon,
   UserPlusIcon,
+  UserIcon,
+  LockClosedIcon,
+  ArrowPathIcon,
+  ClockIcon,
+  CheckCircleIcon,
+  CheckBadgeIcon,
 } from "@heroicons/react/24/solid";
-import { Home, Profile, Tables, Notifications } from "@/pages/dashboard";
-import { SignIn, SignUp } from "@/pages/auth";
-
+import {
+  Home,
+  Tables,
+  DeactivatedUsers,
+  PendingAds,
+  NewUser,
+  PendingSponserAds,
+  ApprovedSponseredLogos,
+  ApprovedAds,
+} from "@/pages/dashboard";
+import PostAd from "./pages/dashboard/PostAd";
 const icon = {
   className: "w-5 h-5 text-inherit",
 };
@@ -23,41 +33,54 @@ export const routes = [
         path: "/home",
         element: <Home />,
       },
+
       {
-        icon: <UserCircleIcon {...icon} />,
-        name: "profile",
-        path: "/profile",
-        element: <Profile />,
+        icon: <ArrowPathIcon {...icon} />,
+        name: "Pending Ads",
+        path: "/pendingads",
+        element: <PendingAds />,
       },
       {
-        icon: <TableCellsIcon {...icon} />,
-        name: "tables",
-        path: "/tables",
+        icon: <ClockIcon {...icon} />,
+        name: "Pending Sponser Logos",
+        path: "/sponserpendinglogos",
+        element: <PendingSponserAds />,
+      },
+      {
+        icon: <UserIcon {...icon} />,
+        name: "All Users",
+        path: "/users",
         element: <Tables />,
       },
       {
-        icon: <BellIcon {...icon} />,
-        name: "notifactions",
-        path: "/notifactions",
-        element: <Notifications />,
+        icon: <LockClosedIcon {...icon} />,
+        name: "locked users",
+        path: "/lockedusers",
+        element: <DeactivatedUsers />,
       },
-    ],
-  },
-  {
-    title: "auth pages",
-    layout: "auth",
-    pages: [
       {
-        icon: <ArrowRightOnRectangleIcon {...icon} />,
-        name: "sign in",
-        path: "/sign-in",
-        element: <SignIn />,
+        icon: <CheckBadgeIcon {...icon} />,
+        name: "Approved Ads",
+        path: "/approvedads",
+        element: <ApprovedAds />,
+      },
+      {
+        icon: <CheckCircleIcon {...icon} />,
+        name: "Sponsered logos",
+        path: "/approvedlogos",
+        element: <ApprovedSponseredLogos />,
       },
       {
         icon: <UserPlusIcon {...icon} />,
-        name: "sign up",
-        path: "/sign-up",
-        element: <SignUp />,
+        name: "Add New User",
+        path: "/newuser",
+        element: <NewUser />,
+      },
+      {
+        icon: <ArrowPathIcon {...icon} />,
+        name: "Post Ad",
+        path: "/postad",
+        element: <PostAd />,
       },
     ],
   },

@@ -8,12 +8,11 @@ import {
 import { useEffect, useState } from "react";
 
 import { toast, ToastContainer } from "react-toastify";
-import { TrashIcon, LockClosedIcon } from "@heroicons/react/24/outline";
-
+import { LockOpenIcon } from "@heroicons/react/24/outline";
+import { authorsTableData, projectsTableData } from "@/data";
 import { Loader } from "@/widgets/cards";
 import axios from "axios";
-
-export function Tables() {
+export const DeactivatedUsers = () => {
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(false);
   const [load, setLoad] = useState(false);
@@ -22,7 +21,7 @@ export function Tables() {
       setLoading(true);
 
       try {
-        const response = await axios.get("/admin/users");
+        const response = await axios.get("/admin/users/deactivated");
         const data = await response.data;
         setUsers(data);
         console.log(data);
@@ -36,10 +35,10 @@ export function Tables() {
     })();
   }, [load]);
 
-  const handleDelete = async (id) => {
+  const handelActivate = async (id) => {
     try {
       setLoading(true);
-      const response = await axios.delete(`/admin/users/`, {
+      const response = await axios.put(`/admin/users/deactivated`, {
         id,
       });
 
@@ -58,31 +57,6 @@ export function Tables() {
       setLoading(false);
     }
   };
-
-  const handleDeactivate = async (id) => {
-    try {
-      setLoading(true);
-
-      const response = await axios.put(`/admin/users/`, {
-        id,
-      });
-
-      const data = await response.data;
-      if (response.status === 200) {
-        toast.success(data);
-      }
-    } catch (error) {
-      if (error.response) {
-        toast.error(error.response.data);
-      } else {
-        toast.error("something went wrong");
-      }
-    } finally {
-      setLoad(!load);
-      setLoading(false);
-    }
-  };
-
   return (
     <div className="mt-12 mb-8 flex flex-col gap-12">
       <ToastContainer />
@@ -119,13 +93,13 @@ export function Tables() {
                 {users?.map(
                   ({ image, name, email, address, _id, phone }, key) => {
                     const className = `py-3 px-5 ${
-                      key === users.length - 1
+                      key === authorsTableData.length - 1
                         ? ""
                         : "border-b border-blue-gray-50"
                     }`;
 
                     return (
-                      <tr key={_id}>
+                      <tr key={name}>
                         <td className={className}>
                           <div className="flex items-center gap-4">
                             <Avatar src={image} alt={name} size="sm" />
@@ -155,19 +129,11 @@ export function Tables() {
                         <td
                           className={`${className} flex w-32 items-center justify-between  text-sm`}
                         >
-                          <TrashIcon
-                            height={"30"}
-                            color="red"
-                            className="cursor-pointer hover:text-red-700"
-                            title="delete the user"
-                            onClick={() => handleDelete(_id)}
-                            role="button"
-                          />
-                          <LockClosedIcon
+                          <LockOpenIcon
                             height={"30"}
                             className="cursor-pointer hover:text-gray-900 "
-                            title="deactivate the user"
-                            onClick={() => handleDeactivate(_id)}
+                            title="activate/unlock the user"
+                            onClick={() => handelActivate(_id)}
                             role="button"
                           />
                         </td>
@@ -182,6 +148,6 @@ export function Tables() {
       </Card>
     </div>
   );
-}
+};
 
-export default Tables;
+export default DeactivatedUsers;

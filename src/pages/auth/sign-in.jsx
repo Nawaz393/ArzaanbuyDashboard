@@ -1,4 +1,3 @@
-import { Link } from "react-router-dom";
 import {
   Card,
   CardHeader,
@@ -9,10 +8,54 @@ import {
   Button,
   Typography,
 } from "@material-tailwind/react";
+import axios from "axios";
+import { AuthContext } from "../../context/authcontext";
+import { useState, useContext } from "react";
+import { toast, ToastContainer } from "react-toastify";
 
 export function SignIn() {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [isloading, setIsLoading] = useState(false);
+  const { login } = useContext(AuthContext);
+
+  const handleSubmit = async (e) => {
+    var tload = toast.loading("logging in...");
+    e.preventDefault();
+    setIsLoading(true);
+
+    console.log(email, password);
+    try {
+      const response = await axios.post("/admin/login", {
+        email,
+        password,
+      });
+      const data = await response.data;
+      console.log(data);
+
+      if (response.status === 200) {
+        console.log(data);
+        toast.success("logined successfully ");
+
+        login(data);
+
+        console.log(" session", JSON.parse(localStorage.getItem("user")));
+      }
+    } catch (error) {
+      console.log(error);
+      if (error.response) {
+        toast.error(error.response.data);
+      } else {
+        toast.error("something went wrong");
+      }
+    } finally {
+      toast.dismiss(tload);
+      setIsLoading(false);
+    }
+  };
   return (
     <>
+      <ToastContainer />
       <img
         src="https://images.unsplash.com/photo-1497294815431-9365093b7331?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1950&q=80"
         className="absolute inset-0 z-0 h-full w-full object-cover"
@@ -30,29 +73,35 @@ export function SignIn() {
             </Typography>
           </CardHeader>
           <CardBody className="flex flex-col gap-4">
-            <Input type="email" label="Email" size="lg" />
-            <Input type="password" label="Password" size="lg" />
-            <div className="-ml-2.5">
-              <Checkbox label="Remember Me" />
-            </div>
+            <Input
+              type="email"
+              label="Email"
+              size="lg"
+              required
+              onChange={(e) => {
+                setEmail(e.target.value);
+              }}
+            />
+            <Input
+              type="password"
+              label="Password"
+              size="lg"
+              required
+              minLength={8}
+              onChange={(e) => {
+                setPassword(e.target.value);
+              }}
+            />
           </CardBody>
           <CardFooter className="pt-0">
-            <Button variant="gradient" fullWidth>
+            <Button
+              variant="gradient"
+              fullWidth
+              disabled={isloading}
+              onClick={handleSubmit}
+            >
               Sign In
             </Button>
-            <Typography variant="small" className="mt-6 flex justify-center">
-              Don't have an account?
-              <Link to="/auth/sign-up">
-                <Typography
-                  as="span"
-                  variant="small"
-                  color="blue"
-                  className="ml-1 font-bold"
-                >
-                  Sign up
-                </Typography>
-              </Link>
-            </Typography>
           </CardFooter>
         </Card>
       </div>

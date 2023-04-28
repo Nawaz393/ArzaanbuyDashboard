@@ -8,13 +8,13 @@ import {
 import { useEffect, useState } from "react";
 
 import { toast, ToastContainer } from "react-toastify";
-import { TrashIcon, LockClosedIcon } from "@heroicons/react/24/outline";
+import { TrashIcon } from "@heroicons/react/24/outline";
 
 import { Loader } from "@/widgets/cards";
 import axios from "axios";
 
-export function Tables() {
-  const [users, setUsers] = useState([]);
+export function ApprovedAds() {
+  const [Ads, setAds] = useState([]);
   const [loading, setLoading] = useState(false);
   const [load, setLoad] = useState(false);
   useEffect(() => {
@@ -22,9 +22,9 @@ export function Tables() {
       setLoading(true);
 
       try {
-        const response = await axios.get("/admin/users");
+        const response = await axios.get("/admin/approvedads");
         const data = await response.data;
-        setUsers(data);
+        setAds(data);
         console.log(data);
       } catch (error) {
         if (error.response) {
@@ -39,32 +39,10 @@ export function Tables() {
   const handleDelete = async (id) => {
     try {
       setLoading(true);
-      const response = await axios.delete(`/admin/users/`, {
-        id,
-      });
-
-      const data = await response.data;
-      if (response.status === 200) {
-        toast.success(data);
-      }
-    } catch (error) {
-      if (error.response) {
-        toast.error(error.response.data);
-      } else {
-        toast.error("something went wrong");
-      }
-    } finally {
-      setLoad(!load);
-      setLoading(false);
-    }
-  };
-
-  const handleDeactivate = async (id) => {
-    try {
-      setLoading(true);
-
-      const response = await axios.put(`/admin/users/`, {
-        id,
+      const response = await axios.delete(`/admin/deleteApproved`, {
+        params: {
+          id: id,
+        },
       });
 
       const data = await response.data;
@@ -89,7 +67,7 @@ export function Tables() {
       <Card>
         <CardHeader variant="gradient" color="blue" className="mb-8 p-6">
           <Typography variant="h6" color="white">
-            All Users
+            Approved Ads
           </Typography>
         </CardHeader>
 
@@ -100,7 +78,7 @@ export function Tables() {
             <table className="w-full min-w-[640px] table-auto">
               <thead>
                 <tr>
-                  {["User", "Info", "Edit"].map((el) => (
+                  {["User", "title/phone", "boost", "Delete"].map((el) => (
                     <th
                       key={el}
                       className="border-b border-blue-gray-50 py-3 px-5 text-left"
@@ -116,10 +94,13 @@ export function Tables() {
                 </tr>
               </thead>
               <tbody>
-                {users?.map(
-                  ({ image, name, email, address, _id, phone }, key) => {
+                {Ads?.map(
+                  (
+                    { images, name, tagline, email, _id, phone, boost },
+                    key
+                  ) => {
                     const className = `py-3 px-5 ${
-                      key === users.length - 1
+                      key === Ads.length - 1
                         ? ""
                         : "border-b border-blue-gray-50"
                     }`;
@@ -128,7 +109,7 @@ export function Tables() {
                       <tr key={_id}>
                         <td className={className}>
                           <div className="flex items-center gap-4">
-                            <Avatar src={image} alt={name} size="sm" />
+                            <Avatar src={images[0]} alt={name} size="sm" />
                             <div>
                               <Typography
                                 variant="small"
@@ -145,10 +126,15 @@ export function Tables() {
                         </td>
                         <td className={className}>
                           <Typography className="text-xs font-semibold text-blue-gray-600">
-                            {address}
+                            {tagline}
                           </Typography>
                           <Typography className="text-xs font-normal text-blue-gray-500">
                             {phone}
+                          </Typography>
+                        </td>
+                        <td className={className}>
+                          <Typography className="text-xs font-semibold text-blue-gray-600">
+                            {boost.boosted ? "Boosted" : "Not Boosted"}
                           </Typography>
                         </td>
 
@@ -159,15 +145,8 @@ export function Tables() {
                             height={"30"}
                             color="red"
                             className="cursor-pointer hover:text-red-700"
-                            title="delete the user"
+                            title="delete the ad"
                             onClick={() => handleDelete(_id)}
-                            role="button"
-                          />
-                          <LockClosedIcon
-                            height={"30"}
-                            className="cursor-pointer hover:text-gray-900 "
-                            title="deactivate the user"
-                            onClick={() => handleDeactivate(_id)}
                             role="button"
                           />
                         </td>
@@ -184,4 +163,4 @@ export function Tables() {
   );
 }
 
-export default Tables;
+export default ApprovedAds;
