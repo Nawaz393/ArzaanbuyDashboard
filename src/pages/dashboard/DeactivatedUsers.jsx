@@ -9,7 +9,6 @@ import { useEffect, useState } from "react";
 
 import { toast, ToastContainer } from "react-toastify";
 import { LockOpenIcon } from "@heroicons/react/24/outline";
-import { authorsTableData, projectsTableData } from "@/data";
 import { Loader } from "@/widgets/cards";
 import axios from "axios";
 export const DeactivatedUsers = () => {
