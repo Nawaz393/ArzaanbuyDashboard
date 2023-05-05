@@ -92,7 +92,7 @@ export const DeactivatedUsers = () => {
                 {users?.map(
                   ({ image, name, email, address, _id, phone }, key) => {
                     const className = `py-3 px-5 ${
-                      key === authorsTableData.length - 1
+                      key === users?.length - 1
                         ? ""
                         : "border-b border-blue-gray-50"
                     }`;
